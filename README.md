@@ -8,6 +8,8 @@ Your mission is to gather evidence, uncover problems at different layers, and tu
 **Tools:** GitHub, GitHub Actions, C, Docker, Minikube, Kubernetes; Jenkins for the bonus.  
 **No local installation required:** work in the repository and inspect GitHub Actions logs.
 
+**[📎 Open the Lab Cheatsheet — Git commands, pre-push checklist, optional local checks & Actions debugging](docs/cheatsheet.md)**
+
 ## Mission map
 
 | Mission | Investigation | Suggested time |

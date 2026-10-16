@@ -1,7 +1,7 @@
 # Bonus — Jenkins Pipeline Challenge
 
 **Optional challenge:** approximately 15–20 minutes  
-[← Task 3](task3.md) · [Lab Home](../README.md)
+[← Task 3](task3.md) · [Lab Home](../README.md) · [📎 Cheatsheet](cheatsheet.md)
 
 **Need help?** [Jump to the expandable hints](#-stuck-open-a-hint-click-to-expand). Open one at a time.
 

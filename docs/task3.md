@@ -1,126 +1,68 @@
 # Task 3 — Kubernetes Investigation
 
 **Estimated time:** 20 minutes  
-[← Task 2](task2.md) · [Lab Home](../README.md) · [Next: Bonus →](bonus.md)
+[← Task 2](task2.md) · [Lab Home](../README.md) · [Next: Bonus →](bonus.md) · [📎 Cheatsheet](cheatsheet.md)
 
-**Need help?** Jump to the expandable hints below. Open one at a time.
+**Need help?** [Jump to the expandable hints](#-stuck-open-a-hint-click-to-expand). Open one at a time.
 
 ## Mission
 
-Your C application now passes its functional test, and its Docker image can run successfully.
+Your C application now passes its test and runs inside Docker. Next, execute the same image as a **Kubernetes Job** on Minikube, from GitHub Actions.
 
-The next challenge is to execute that same image as a **Kubernetes Job** using Minikube inside GitHub Actions.
+Extend the **existing `docker-build` job** to:
 
-Your repository already contains a Kubernetes manifest named `Job.yaml`, but the workflow does not yet execute it.
+1. Start a local Kubernetes cluster.
+2. Make the image built earlier in that job available to the cluster.
+3. Create the Job described by `Job.yaml`.
+4. Wait for the Job to finish.
+5. Read the application's output and verify `2 ^ 10 = 1024`.
 
-Extend the existing `docker-build` job to:
-
-1. Start a temporary Minikube cluster.
-2. Make the previously built Docker image available inside Minikube.
-3. Create the Kubernetes Job defined in `Job.yaml`.
-4. Wait for the Job to complete successfully.
-5. Inspect the application's output and verify that it equals `2 ^ 10 = 1024`.
-
-**Important:** There may be a configuration problem preventing the Kubernetes Job from completing.
-
-Do not immediately change the manifest. First, investigate the failure and collect evidence.
+There may be a mismatch in the repository's configuration. **Use the failure to identify it.**
 
 ## Evidence to collect
 
-Before making changes, inspect `.github/workflows/ci.yml`, `Dockerfile`, and `Job.yaml`.
+Inspect `Job.yaml`, `Dockerfile`, and `.github/workflows/ci.yml`. Find the answers to these questions **before editing the manifest**:
 
-Answer the following questions:
+- What is the Kubernetes Job's `metadata.name`?
+- What image name and tag does `Job.yaml` request?
+- What image name and tag does the Docker job build?
+- What do the container arguments mean?
+- If the Job does not complete, is the Pod pending, unable to start, or running but failing?
 
-- What is the Kubernetes Job's name?
-- Which Docker image name and tag does the workflow build?
-- Which image name and tag does `Job.yaml` request?
-- What arguments are passed to the application?
-- Does Kubernetes successfully create the Job?
-- Does the Job complete, fail, or remain pending?
-- What do the Pod status and events reveal?
-- Does the application produce the expected output?
-
-Remember that **a Kubernetes Job being created does not mean it completed successfully**.
+The Job's status and Pod **Events** are often more useful than application logs when the container never started.
 
 ## Reference desk
 
-### A. Start Minikube in GitHub Actions
+### A. Start Minikube in a GitHub Actions step
 
-GitHub Actions can use an existing action to prepare a local Kubernetes environment.
-
-For example:
+A GitHub Action can prepare a tool for later steps in the same job:
 
 ```yaml
 - name: Prepare local Kubernetes
   uses: medyagh/setup-minikube@latest
 ```
 
-This action starts Minikube on the GitHub Actions runner.
+### B. Command reference
 
-You can then interact with the cluster using `kubectl`.
+| Command | Purpose |
+| --- | --- |
+| `minikube image load IMAGE:TAG` | Import a locally built image into Minikube |
+| `kubectl apply -f FILE` | Create or update resources from a manifest |
+| `kubectl get jobs,pods` | Show Jobs and Pods |
+| `kubectl describe job NAME` | Inspect a Job and its events |
+| `kubectl describe pod NAME` | Inspect a Pod's status and events |
+| `kubectl wait --for=condition=complete job/NAME --timeout=120s` | Wait for successful Job completion |
+| `kubectl logs job/NAME` | Read the output of the Job's Pod |
 
-### B. Make the Docker image available to Kubernetes
+The commands above are **patterns**, not a ready-to-paste workflow. Work out the correct arguments and order from the files in your repository.
 
-Your workflow builds the Docker image using `docker/build-push-action@v6`.
+### C. Why the steps must stay in one job
 
-Its `load: true` configuration makes the image available to Docker on the GitHub Actions runner.
+GitHub Actions jobs normally run on separate virtual machines. A Docker image built in one job is **not automatically available** in another. Add Minikube and Kubernetes steps after Docker build and Docker runtime verification, inside the same `docker-build` job.
 
-However, **Minikube has its own container image environment**.
+### D. Capture diagnostics even after failure
 
-An image available to Docker on the runner is not necessarily available to Kubernetes.
-
-Use the following command structure to transfer an existing image into Minikube:
-
-```text
-minikube image load IMAGE_NAME:TAG
-```
-
-The image name and tag must match the image built earlier in the workflow.
-
-You do not need to push the image to Docker Hub or GitHub Container Registry.
-
-### C. Kubernetes command reference
-
-| Command                                                         | Purpose                                               |
-| --------------------------------------------------------------- | ----------------------------------------------------- |
-| `kubectl apply -f FILE`                                         | Create or update Kubernetes resources from a manifest |
-| `kubectl get jobs,pods`                                         | Inspect Jobs and Pods                                 |
-| `kubectl describe job NAME`                                     | Inspect Job status and events                         |
-| `kubectl describe pod NAME`                                     | Inspect Pod status and events                         |
-| `kubectl wait --for=condition=complete job/NAME --timeout=120s` | Wait for a Job to finish successfully                 |
-| `kubectl logs job/NAME`                                         | Read the application's output                         |
-
-These are command patterns, not a complete workflow.
-
-Determine the correct filenames, resource names, image tags, and execution order from your repository.
-
-### D. Why everything must run in the same job
-
-GitHub Actions jobs normally execute on separate runners.
-
-This means that a Docker image created in one job is not automatically available in another.
-
-For this lab, keep the following operations inside the existing `docker-build` job:
-
-1. Build the Docker image.
-2. Verify the container's runtime behavior.
-3. Start Minikube.
-4. Load the image into Minikube.
-5. Run and verify the Kubernetes Job.
-
-The `docker-build` job should still depend on the successful completion of the `test` job from Task 1.
-
-### E. Investigate Kubernetes failures
-
-When a Kubernetes Job does not complete, the application itself may not be the problem.
-
-For example, a Pod might be unable to start because its requested image is unavailable.
-
-Start by inspecting the Job and Pod status.
-
-If the container never starts, Pod events are often more useful than application logs.
-
-You can add a diagnostic step that runs when an earlier step fails:
+A step that fails normally stops later ordinary steps. For investigation, you can add a diagnostic step that runs on failure:
 
 ```yaml
 - name: Inspect cluster after failure
@@ -128,117 +70,43 @@ You can add a diagnostic step that runs when an earlier step fails:
   run: kubectl get jobs,pods
 ```
 
-You may extend this step with additional `kubectl describe` commands.
+You can extend this with `kubectl describe` when the Pod does not start. For optional diagnostic commands, `|| true` can prevent the diagnostic step itself from hiding the original error.
 
-For optional diagnostic commands, `|| true` can prevent an unavailable resource from causing the diagnostic step to fail before other information is collected.
+### E. Image pull behavior
 
-### F. Understand image pull behavior
+`imagePullPolicy: Never` tells Kubernetes not to fetch the image from a remote registry. If the requested image is absent from the Minikube image store, the Pod cannot start. Compare **both** the name and tag.
 
-Inspect the following field in `Job.yaml`:
-
-```yaml
-imagePullPolicy: Never
-```
-
-This tells Kubernetes not to download the image from a remote registry.
-
-The image must already exist in Minikube's image store.
-
-If the image name or tag does not match what was loaded into Minikube, the container cannot start.
-
-Compare the image references carefully before changing anything.
-
-### G. Verify the actual result
-
-A completed Kubernetes Job is an important signal, but this lab requires more than successful execution.
-
-Your workflow must also inspect the application's output.
-
-Use the same output-capture and comparison approach from Tasks 1 and 2.
-
-The workflow should fail if the application does not print:
-
-```text
-2 ^ 10 = 1024
-```
-
-## 🧩 Stuck? Open a hint
+## 🧩 Stuck? Open a hint (click to expand)
 
 <details>
-<summary>Hint 1 — The Kubernetes Job never completes</summary>
+<summary>Hint 1 — The Job never completes</summary>
 
-Start by inspecting the Jobs and Pods in the cluster.
-
-Look at the Pod status and events before assuming the application has crashed.
-
-If there are no application logs, the container may never have started.
+Start by listing the Pods and inspecting the relevant Pod's events. If no application logs exist, the container may never have started.
 
 </details>
 
 <details>
 <summary>Hint 2 — The Pod reports an image-related problem</summary>
 
-Compare three places:
-
-1. The image name and tag produced by the Docker Buildx step.
-2. The image name and tag passed to `minikube image load`.
-3. The image name and tag requested in `Job.yaml`.
-
-All three must refer to the same image.
-
-Remember that `imagePullPolicy: Never` prevents Kubernetes from downloading a missing image.
+Compare the image used by `docker build`, the image passed to `minikube image load`, and the image requested in `Job.yaml`. They must refer to the same image and tag.
 
 </details>
 
 <details>
-<summary>Hint 3 — The image exists on the runner, but Kubernetes cannot find it</summary>
+<summary>Hint 3 — Your diagnostic step doesn't run</summary>
 
-The Docker Buildx action uses `load: true` to load the image into the runner's Docker Engine.
-
-That does not automatically import it into Minikube.
-
-Check whether the workflow includes an image-loading step **after Minikube starts** and **before the Kubernetes Job is created**.
-
-</details>
-
-<details>
-<summary>Hint 4 — My diagnostic commands never execute</summary>
-
-GitHub Actions normally skips later ordinary steps after a failure.
-
-Add a separate diagnostic step using:
-
-```yaml
-if: failure()
-```
-
-Place it after the Kubernetes execution steps.
-
-Use `kubectl get` and `kubectl describe` to collect information about the failed Job and its Pods.
-
-</details>
-
-<details>
-<summary>Hint 5 — The Kubernetes Job completes, but how do I verify the output?</summary>
-
-Use `kubectl logs` to retrieve the application's output from the completed Job.
-
-Capture the result in a shell variable, print it, and compare it with the expected string using `test`.
-
-This is the same verification technique you used in Tasks 1 and 2, but the application now runs inside Kubernetes.
+Use `if: failure()` on a **separate step** after the Kubernetes commands. That way the original failing step is still visible, and diagnostics can run afterward.
 
 </details>
 
 ## Completion criteria
 
-- [ ] Minikube starts successfully inside the existing `docker-build` job.
-- [ ] The Docker Buildx image is loaded into Minikube.
-- [ ] The Kubernetes manifest is applied successfully.
-- [ ] The Kubernetes Job completes successfully.
+- [ ] Minikube starts inside the Docker job.
+- [ ] The built image is loaded into Minikube.
+- [ ] The manifest's Job is created and completes.
+- [ ] The actual Kubernetes application output is verified.
 - [ ] The configuration mismatch is identified and corrected.
-- [ ] The application's output is verified against `2 ^ 10 = 1024`.
-- [ ] Useful Kubernetes diagnostics are available when execution fails.
-- [ ] The complete GitHub Actions workflow passes without publishing or deploying the image to an external environment.
+- [ ] Useful diagnostics appear when the Kubernetes run fails.
 
 ---
 

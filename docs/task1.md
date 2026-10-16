@@ -1,7 +1,7 @@
 # Task 1 — The Green Build That Lies
 
 **Estimated time:** 15 minutes  
-[← Lab Home](../README.md) · [Next: Task 2 →](task2.md)
+[← Lab Home](../README.md) · [Next: Task 2 →](task2.md) · [📎 Cheatsheet](cheatsheet.md)
 
 **Need help?** [Jump to the expandable hints](#-stuck-open-a-hint-click-to-expand). Open one at a time.
 

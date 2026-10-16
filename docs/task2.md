@@ -1,64 +1,42 @@
 # Task 2 — The Unprotected Docker Build
 
 **Estimated time:** 20 minutes  
-[← Task 1](task1.md) · [Lab Home](../README.md) · [Next: Task 3 →](task3.md)
+[← Task 1](task1.md) · [Lab Home](../README.md) · [Next: Task 3 →](task3.md) · [📎 Cheatsheet](cheatsheet.md)
 
-**Need help?** Jump to the expandable hints below. Open one at a time.
+**Need help?** [Jump to the expandable hints](#-stuck-open-a-hint-click-to-expand). Open one at a time.
 
 ## Mission
 
-The C program now passes its functional test. The repository also contains a `docker-build` job that builds a Docker image using GitHub Actions.
-
-But two things remain unproven:
+The C program now passes its functional test. The repository also contains a `docker-build` job. But two things remain unproven:
 
 1. **Dependency:** Will Docker build even when the functional test fails?
-2. **Runtime:** Does an image that builds successfully actually start and run the application?
-
-Your mission is to investigate both problems and make the pipeline more reliable.
+2. **Runtime:** Does an image that builds successfully actually start and run the program?
 
 ### Part A — Protect the build
 
-Inspect the two jobs in `.github/workflows/ci.yml`.
+Inspect the two jobs in `.github/workflows/ci.yml`. Make `docker-build` depend on a successful `test` job.
 
-Make `docker-build` depend on a successful `test` job.
-
-**Prove your change:** Temporarily make the functional test fail, commit and push your changes, and inspect the Actions run.
-
-The Docker job should be **skipped**, not executed.
-
-Restore the correct functional test afterward.
+**Prove your change:** Temporarily make the functional test fail, push, and inspect the Actions run. The Docker job should be **skipped**, not executed. Restore the correct test afterward.
 
 ### Part B — Test the container
 
-The Docker image is built using the same Docker Buildx actions introduced in the lecture.
+Add a step to the existing Docker job that starts the image with base `2` and exponent `10`. Check the observed output against `2 ^ 10 = 1024`.
 
-However, building an image successfully does not prove that the container can actually start.
-
-Extend the existing `docker-build` job to:
-
-1. Start a container from the image tagged `expo:1.0`.
-2. Pass base `2` and exponent `10` as arguments.
-3. Capture the application's output.
-4. Verify that the output is exactly `2 ^ 10 = 1024`.
-
-If the container fails to start, investigate the Dockerfile and the error message before changing anything.
+The image may build while the container fails to start. If that happens, investigate the Dockerfile rather than repeatedly rebuilding it unchanged.
 
 ## Evidence to collect
 
 - When the functional test fails, is `docker-build` skipped?
-- Does the Docker image build step succeed?
-- Does the container start successfully?
-- What output does the container produce?
-- If the container cannot start, which executable path does Docker attempt to use?
-- Where is the executable actually located in the final image?
+- Does the Docker **build** step pass?
+- Does the Docker **run** step pass?
+- If the container cannot start, which path does Docker attempt to execute?
+- Where is the executable actually placed in the final image?
 
 ## Reference desk
 
 ### A. Job dependencies
 
-GitHub Actions jobs run independently unless a dependency is declared.
-
-For example, this unrelated job waits for another job to succeed:
+Jobs run independently unless a dependency is declared. Here `publish` runs only after `verify` succeeds:
 
 ```yaml
 jobs:
@@ -67,118 +45,65 @@ jobs:
     runs-on: ubuntu-latest
 ```
 
-Use the actual job IDs from your workflow. A display name is not necessarily a job ID.
+Use the actual job IDs in your workflow; a display name is not necessarily a job ID.
 
-### B. Building images with Docker Buildx
-
-In this lab, GitHub Actions uses dedicated Docker actions to build the image:
-
-- `docker/setup-buildx-action@v3` prepares Docker Buildx.
-- `docker/build-push-action@v6` builds the image.
-- `context` specifies the Docker build context.
-- `tags` assigns an image name and tag.
-- `load: true` makes the built image available to the runner's Docker Engine.
-
-The image build is already configured for you.
-
-**You do not need to recreate the Docker build step.**
-
-Your challenge is to determine what happens after the image is built.
-
-### C. Running a Docker container
-
-The general command structure is:
+### B. Docker command shapes
 
 ```text
+docker build -t IMAGE_NAME:TAG BUILD_CONTEXT
 docker run --rm IMAGE_NAME:TAG ARG1 ARG2
 ```
 
-- `--rm` removes the container after execution.
-- `IMAGE_NAME:TAG` identifies the image to run.
-- `ARG1` and `ARG2` are arguments passed to the container's executable.
+The build context is usually `.` when the Dockerfile is in the repository root. The image name and tag must match between `docker build` and `docker run`.
 
-Use the workflow and the application source code to determine the correct values.
+### C. Read a multi-stage Dockerfile
 
-### D. Read a multi-stage Dockerfile
+In a multi-stage build, `COPY --from=build SOURCE DESTINATION` copies a file into the **final** image. `ENTRYPOINT` specifies what the container tries to execute when it starts.
 
-A Dockerfile can use multiple stages.
-
-The final stage determines which files are available inside the running container.
-
-For example:
+Example using unrelated paths:
 
 ```dockerfile
 COPY --from=build /build/tool /usr/local/bin/tool
 ENTRYPOINT ["/usr/local/bin/tool"]
 ```
 
-In this unrelated example, the executable is copied to `/usr/local/bin/tool`, and the entrypoint uses the same location.
+The path in `ENTRYPOINT` must exist **inside the final image**.
 
-**The `ENTRYPOINT` path must refer to an executable that exists inside the final image.**
+### D. Verify the result
 
-### E. Verify application output
+A container returning exit code `0` is useful, but for this lab you must also verify the printed answer. You can reuse the Bash output-capture and comparison pattern from [Task 1](task1.md).
 
-A container returning exit code `0` is useful, but it does not prove that the application produced the expected answer.
-
-Reuse the Bash output-capture and comparison technique from [Task 1](task1.md).
-
-The CI step should fail if the actual output differs from the expected output.
-
-## 🧩 Stuck? Open a hint
+## 🧩 Stuck? Open a hint (click to expand)
 
 <details>
 <summary>Hint 1 — The Docker job still runs when the test is red</summary>
 
-Look for the job-level `needs:` property.
-
-It belongs directly under the `docker-build` job, not inside its `steps` section.
+Look at the job-level `needs:` property, not a step-level property. It belongs directly under the `docker-build` job ID.
 
 </details>
 
 <details>
-<summary>Hint 2 — The Docker build succeeds, but the container fails</summary>
+<summary>Hint 2 — Docker build is green, but Docker run fails</summary>
 
-A successful image build does not guarantee a valid runtime configuration.
-
-Compare the final-stage `COPY` destination with the `ENTRYPOINT` path in the Dockerfile.
+Compare the final-stage `COPY` destination with `ENTRYPOINT`. A Docker image can contain a valid executable and still point at the wrong location.
 
 </details>
 
 <details>
-<summary>Hint 3 — Which executable path should Docker use?</summary>
+<summary>Hint 3 — Which path should the container start?</summary>
 
-Follow the compiled executable through the Dockerfile.
-
-Find where the final stage copies it, then compare that destination with the `ENTRYPOINT`.
-
-The paths must match exactly.
-
-</details>
-
-<details>
-<summary>Hint 4 — How do I test the container's output?</summary>
-
-Use the same approach as Task 1:
-
-1. Execute the application.
-2. Capture its standard output using `$(...)`.
-3. Print the observed output.
-4. Compare it with the expected string using `test`.
-
-This time, the application is executed through `docker run` rather than directly as `./expo`.
+Follow the file through the **final** stage of the Dockerfile. The location used by `ENTRYPOINT` must exactly match the copied binary's destination.
 
 </details>
 
 ## Completion criteria
 
-- [ ] The `docker-build` job depends on the `test` job.
-- [ ] A deliberately failing functional test causes the Docker job to be skipped.
-- [ ] The existing Docker Buildx configuration remains functional.
-- [ ] The Docker image builds successfully.
+- [ ] `docker-build` waits for `test`.
+- [ ] A deliberately failing functional test causes Docker to be skipped.
+- [ ] The Docker image builds.
 - [ ] The container starts and executes the application.
-- [ ] The actual container output is checked against `2 ^ 10 = 1024`.
-- [ ] The underlying runtime configuration problem is identified and corrected.
-- [ ] The correct functional test is restored and the workflow passes.
+- [ ] The container's actual output is checked against `2 ^ 10 = 1024`.
+- [ ] The correct test is restored and the workflow passes.
 
 ---
 
