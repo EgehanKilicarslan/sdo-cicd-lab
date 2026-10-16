@@ -1,0 +1,46 @@
+
+# Git metadata
+.git
+.gitignore
+
+# macOS / Windows metadata
+.DS_Store
+.AppleDouble
+Thumbs.db
+Desktop.ini
+
+# Editor configuration
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# Local C build artifacts
+expo
+*.o
+*.obj
+*.out
+*.exe
+*.a
+*.so
+*.dylib
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+core
+core.*
+
+# Local environment files
+.env
+.env.*
+!.env.example
+
+# CI/CD and lab documentation
+.github
+docs
+README.md
+Jenkinsfile
+Job.yaml
