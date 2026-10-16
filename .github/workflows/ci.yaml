@@ -9,52 +9,48 @@ jobs:
   # ============================================================
   # TASK 1 — THE GREEN BUILD THAT LIES
   # ============================================================
-  # A successful compilation does not guarantee correct behavior.
+  # The application compiles successfully, but does it work?
   #
-  # Mission:
-  #   Investigate whether the application produces the expected
-  #   result when given specific inputs.
+  # Your mission:
+  #   1. Add a functional test after compilation.
+  #   2. Run the application with the required inputs.
+  #   3. Compare its output with the expected result.
+  #   4. Investigate and fix any unexpected behavior.
   #
-  # Your challenge:
-  #   Extend this job to verify the application's behavior.
-  #   If something fails, use the logs to investigate why.
-  #
-  # Case file: docs/task1.md
+  # Instructions: docs/task1.md
   # ============================================================
 
   test:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
 
       - name: Compile C application
         run: gcc expo.c -lm -o expo
 
-      # YOUR INVESTIGATION STARTS HERE.
-      # What should happen after compilation?
+      # TASK 1: Add your functional test step here.
 
   # ============================================================
   # TASK 2 — THE UNPROTECTED DOCKER BUILD
   # ============================================================
-  # The application now has a functional test, but the Docker
-  # build has no reason to wait for that test to succeed.
+  # A successful test should be required before building Docker.
+  # A successful image build does not guarantee it can run.
   #
-  # Mission A:
-  #   Make sure a failing test prevents this job from running.
+  # Your mission:
+  #   1. Make this job depend on the test job.
+  #   2. Confirm it is skipped when the test fails.
+  #   3. Run the built Docker image with test arguments.
+  #   4. Verify its output and investigate runtime failures.
   #
-  # Mission B:
-  #   A successful image build does not guarantee that the
-  #   container can actually start and run the application.
-  #   Find a way to verify its runtime behavior.
-  #
-  # Case file: docs/task2.md
+  # Instructions: docs/task2.md
   # ============================================================
 
   docker-build:
-    # INVESTIGATION:
-    # Should this job run independently of the test job?
+    # TASK 2: Add the required job dependency here.
 
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
 
@@ -68,28 +64,25 @@ jobs:
           load: true
           tags: expo:1.0
 
-      # TASK 2 — RUNTIME INVESTIGATION
-      # Can the image execute the application successfully?
-      # A green Docker build is not enough.
+      # TASK 2: Add a step to run and verify the container.
 
       # ========================================================
-      # TASK 3 — KUBERNETES INVESTIGATION
+      # TASK 3 — KUBERNETES: FOLLOW THE EVIDENCE
       # ========================================================
-      # Your container works locally. Now investigate whether
-      # the application can run as a Kubernetes Job.
+      # The Docker container works. Can Kubernetes run it too?
       #
-      # Mission:
-      #   Prepare a local Kubernetes environment.
-      #   Make the Docker image available to the cluster.
-      #   Execute the Job defined in the repository.
-      #   Verify its completion and application output.
+      # Follow these steps in order:
+      #   1. Start a temporary Minikube cluster.
+      #   2. Load the built Docker image into Minikube.
+      #   3. Apply the Kubernetes Job manifest.
+      #   4. Wait for the Job to complete.
+      #   5. Read the Job logs and verify the output.
+      #   6. Collect diagnostics if any step fails.
       #
-      # Something may be wrong with the configuration.
-      # Collect evidence from Kubernetes before fixing it.
+      # The first run may fail. Use the Kubernetes evidence
+      # to identify the problem before changing the manifest.
       #
-      # Case file: docs/task3.md
+      # Guided instructions: docs/task3.md
       # ========================================================
 
-      # YOUR INVESTIGATION CONTINUES HERE.
-      # What needs to happen between building an image
-      # and successfully running it inside Kubernetes?
+      # TASK 3: Add your Kubernetes steps below.
