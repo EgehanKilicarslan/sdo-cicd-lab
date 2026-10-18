@@ -1,7 +1,7 @@
-# Bonus — Jenkins Pipeline Challenge
+# Task 3 — Bonus: Jenkins Pipeline Challenge
 
 **Optional challenge:** approximately 15–20 minutes  
-[← Task 3](task3.md) · [Lab Home](../README.md) · [📎 Cheatsheet](cheatsheet.md)
+[← Task 3](task1-3.md) · [Lab Home](../README.md) · [📎 Cheatsheet](cheatsheet.md)
 
 **Need help?** [Jump to the expandable hints](#-stuck-open-a-hint-click-to-expand). Open one at a time.
 
@@ -26,20 +26,20 @@ The starter `Jenkinsfile` already contains a **Compile** stage. Add:
 4. Open the workflow named **Jenkins Bonus Validation**.
 5. Expand its steps to inspect the Jenkins execution and console output.
 
-This validator is configured to trigger **only when the root `Jenkinsfile` changes on `main`**. Editing `expo.c` or `docs/bonus.md` alone will not start a new Jenkins validation run.
+This validator is configured to trigger **only when the root `Jenkinsfile` changes on `main`**. Editing `expo/expo.c` or `docs/task3-bonus.md` alone will not start a new Jenkins validation run.
 
 > **Important:** A GitHub Actions job becoming green is not enough if you accidentally removed the required test. Check that Jenkins really executed **Compile**, **Functional Test**, and **Docker Build**.
 
 ## A translation guide: GitHub Actions → Jenkins
 
-| GitHub Actions | Jenkins Declarative Pipeline | Meaning |
-| --- | --- | --- |
-| `jobs:` | `pipeline { ... }` | Define the pipeline |
-| `runs-on: ubuntu-latest` | `agent any` | Select an available executor |
-| `steps:` | `steps { ... }` | Commands to execute |
-| `- name: Compile` | `stage('Compile') { ... }` | A named section shown in logs |
-| `run: gcc ...` | `sh 'gcc ...'` | Run a shell command |
-| A failing `run:` command | A failing `sh` command | Mark the stage as failed |
+| GitHub Actions           | Jenkins Declarative Pipeline | Meaning                       |
+| ------------------------ | ---------------------------- | ----------------------------- |
+| `jobs:`                  | `pipeline { ... }`           | Define the pipeline           |
+| `runs-on: ubuntu-latest` | `agent any`                  | Select an available executor  |
+| `steps:`                 | `steps { ... }`              | Commands to execute           |
+| `- name: Compile`        | `stage('Compile') { ... }`   | A named section shown in logs |
+| `run: gcc ...`           | `sh 'gcc ...'`               | Run a shell command           |
+| A failing `run:` command | A failing `sh` command       | Mark the stage as failed      |
 
 Jenkins stages execute in the order they appear in `stages { ... }` in this simple pipeline. You do **not** need to add a GitHub Actions-style `needs:` declaration.
 
@@ -124,7 +124,7 @@ You already know how to:
 - Compile the C application using GCC.
 - Execute it with command-line arguments.
 - Capture output with `$(...)` and compare strings with `test`.
-- Build a Docker image with `docker build -t IMAGE:TAG .`.
+- Build a Docker image with `docker build -t IMAGE:TAG ./expo`.
 - Optionally run a container with `docker run --rm IMAGE:TAG ARG1 ARG2`.
 
 The new challenge is **where those commands belong in Jenkins syntax**, not inventing new shell commands.
@@ -148,16 +148,16 @@ When you open the Jenkins validation logs, check:
 
 ## Common failures and what to inspect
 
-| Symptom | Likely area to investigate |
-| --- | --- |
-| `WorkflowScript: ... expecting '}'` | Missing or misplaced Groovy brace |
-| `Unknown stage section` or `Expected a stage` | Incorrect nesting of `stage` and `steps` |
-| `No such DSL method 'sh'` | `sh` placed outside `steps`, or malformed syntax |
-| `./expo: not found` | Compile stage failed, executable name differs, or wrong working directory |
-| Test stage fails with an exit code | Compare actual output with the expected string |
+| Symptom                                                | Likely area to investigate                                                           |
+| ------------------------------------------------------ | ------------------------------------------------------------------------------------ |
+| `WorkflowScript: ... expecting '}'`                    | Missing or misplaced Groovy brace                                                    |
+| `Unknown stage section` or `Expected a stage`          | Incorrect nesting of `stage` and `steps`                                             |
+| `No such DSL method 'sh'`                              | `sh` placed outside `steps`, or malformed syntax                                     |
+| `./sdo-expo: not found`                                | Compile stage failed, executable name differs, or wrong working directory            |
+| Test stage fails with an exit code                     | Compare actual output with the expected string                                       |
 | `docker: command not found` or daemon connection error | Jenkins runner setup problem; ask the TA rather than editing the application's logic |
-| Docker build fails | Inspect the Dockerfile and the Docker build log |
-| Jenkins validation never appears in Actions | Check whether the **root `Jenkinsfile`** changed in a push to **`main`** |
+| Docker build fails                                     | Inspect the Dockerfile and the Docker build log                                      |
+| Jenkins validation never appears in Actions            | Check whether the **root `Jenkinsfile`** changed in a push to **`main`**             |
 
 ## 🧩 Stuck? Open a hint (click to expand)
 
@@ -208,4 +208,4 @@ If Jenkins cannot download plugins, launch its server, or connect to the host Do
 
 ---
 
-[← Task 3 — Kubernetes Investigation](task3.md) · [Back to Lab Home](../README.md)
+[← Task 3 — Kubernetes Investigation](task1-3.md) · [Back to Lab Home](../README.md)

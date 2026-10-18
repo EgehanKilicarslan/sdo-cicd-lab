@@ -17,7 +17,10 @@ Desktop.ini
 *~
 
 # Local C build artifacts
-expo
+/sdo-expo
+/expo/sdo-expo
+/server
+/website/server
 *.o
 *.obj
 *.out

@@ -1,7 +1,8 @@
-# Task 3 — Kubernetes: Follow the Evidence
+# Task 1.3 — Kubernetes: Follow the Evidence
 
-**Estimated time:** 20 minutes  
-[← Task 2](task2.md) · [Lab Home](../README.md) · [📎 Cheatsheet](cheatsheet.md) · [Next: Bonus →](bonus.md)
+**Classroom timing:** 10 minutes to investigate, then an instructor-led solution reveal. You do not need to finish every step before the reveal.
+
+[← Task 1.2](task1-2.md) · [Lab Home](../README.md) · [📎 Cheatsheet](cheatsheet.md) · [Next: Task 2.1 →](task2-1.md)
 
 **Goal:** Extend the existing `docker-build` job to run your image in Kubernetes, then diagnose why the Kubernetes Job does not complete.
 
@@ -22,7 +23,7 @@ Add the following steps **after your Docker container test, inside the same `doc
 | 5     | Check logs          | A completed Job must also produce the correct result                    |
 | 6     | Collect diagnostics | When something fails, inspect the cluster instead of guessing           |
 
-Use this **scaffold**, replacing the placeholders with values you find in `.github/workflows/ci.yml` and `Job.yaml`:
+Use this **scaffold**, replacing the placeholders with values you find in `.github/workflows/ci.yaml` and `expo/Job.yaml`:
 
 ```yaml
 - name: Start Minikube
@@ -95,13 +96,13 @@ Two new pieces of syntax:
 
 ## Part D — Investigate the failure (~5 minutes)
 
-Commit and push the workflow. Open **Actions → C Application CI → docker-build** and inspect the failed step and the diagnostics output.
+Commit and push the workflow. Open **Actions → CI/CD Pipeline Investigation → docker-build** and inspect the failed step and the diagnostics output.
 
 If the Job does not complete:
 
 1. Find the Pod status in `kubectl get jobs,pods`.
 2. Read the Pod **Events** in `kubectl describe pods`.
-3. Compare the image references in **three places**: the Docker Buildx `tags`, the `minikube image load` command, and the `image:` field in `Job.yaml`.
+3. Compare the image references in **three places**: the Docker Buildx `tags`, the `minikube image load` command, and the `image:` field in `expo/Job.yaml`.
 4. Change the underlying configuration only after identifying the mismatch.
 5. Push again. Confirm that the Job completes **and** the output check passes.
 
@@ -151,7 +152,7 @@ The `if: failure()` condition belongs on the diagnostic **step**, at the same in
 <details>
 <summary>Hint 5 — What exactly should I change to fix the image issue?</summary>
 
-Inspect `image:` in `Job.yaml` and compare it with `tags:` in the Docker Buildx step. With `imagePullPolicy: Never`, Kubernetes will only use an image that has already been loaded into Minikube under the requested name and tag.
+Inspect `image:` in `expo/Job.yaml` and compare it with `tags:` in the Docker Buildx step. With `imagePullPolicy: Never`, Kubernetes will only use an image that has already been loaded into Minikube under the requested name and tag.
 
 </details>
 
@@ -167,4 +168,4 @@ Inspect `image:` in `Job.yaml` and compare it with `tags:` in the Docker Buildx 
 
 ---
 
-[← Task 2](task2.md) · [Lab Home](../README.md) · [📎 Cheatsheet](cheatsheet.md) · [Next: Bonus →](bonus.md)
+[← Task 1.2](task1-2.md) · [Lab Home](../README.md) · [📎 Cheatsheet](cheatsheet.md) · [Next: Task 2.1 →](task2-1.md)

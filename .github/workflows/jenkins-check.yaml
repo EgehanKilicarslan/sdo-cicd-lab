@@ -68,8 +68,8 @@ jobs:
             "$JENKINS_HOME/workspace/lab-validation/"
 
           test -f "$JENKINS_HOME/workspace/lab-validation/Jenkinsfile"
-          test -f "$JENKINS_HOME/workspace/lab-validation/expo.c"
-          test -f "$JENKINS_HOME/workspace/lab-validation/Dockerfile"
+          test -f "$JENKINS_HOME/workspace/lab-validation/expo/expo.c"
+          test -f "$JENKINS_HOME/workspace/lab-validation/expo/Dockerfile"
 
       - name: Configure Jenkins pipeline
         run: |

@@ -16,7 +16,10 @@ Desktop.ini
 .idea/
 
 # C compilation artifacts
-expo
+/sdo-expo
+/expo/sdo-expo
+/server
+/website/server
 *.o
 *.obj
 *.out

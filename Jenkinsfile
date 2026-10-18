@@ -5,7 +5,7 @@ pipeline {
     stages {
         stage('Compile') {
             steps {
-                sh 'gcc expo.c -lm -o expo'
+                sh 'gcc expo/expo.c -lm -o sdo-expo'
             }
         }
 

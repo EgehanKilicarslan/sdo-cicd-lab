@@ -1,6 +1,6 @@
 # Lab Cheatsheet — Git, GitHub Actions & Local Checks
 
-[← Lab Home](../README.md) · [Task 1](task1.md) · [Task 2](task2.md) · [Task 3](task3.md) · [Bonus](bonus.md)
+[← Lab Home](../README.md) · [Task 1](task1-1.md) · [Task 2](task1-2.md) · [Task 3](task1-3.md) · [Bonus](task3-bonus.md)
 
 **Keep this page open while investigating.** It is a reference, not a solution key. You do **not** need Docker, Minikube, Jenkins, or even a C compiler installed locally to complete the main lab: GitHub Actions runs the checks on its own runner.
 
@@ -19,23 +19,23 @@
 
 Run these commands from the **repository root** (the directory containing `README.md`).
 
-| Command | What it does |
-| --- | --- |
-| `git status` | Show changed, staged, and untracked files |
-| `git diff` | Review changes not yet staged |
-| `git diff --staged` | Review what will go into your next commit |
-| `git add path/to/file` | Stage a specific file |
-| `git commit -m "Describe the change"` | Save a commit |
-| `git push` | Send your commits to the remote branch |
-| `git branch --show-current` | Show your current branch |
-| `git log -1 --oneline` | Show your latest commit |
+| Command                               | What it does                              |
+| ------------------------------------- | ----------------------------------------- |
+| `git status`                          | Show changed, staged, and untracked files |
+| `git diff`                            | Review changes not yet staged             |
+| `git diff --staged`                   | Review what will go into your next commit |
+| `git add path/to/file`                | Stage a specific file                     |
+| `git commit -m "Describe the change"` | Save a commit                             |
+| `git push`                            | Send your commits to the remote branch    |
+| `git branch --show-current`           | Show your current branch                  |
+| `git log -1 --oneline`                | Show your latest commit                   |
 
 **Example sequence** (replace the filename and commit message with your actual change):
 
 ```bash
 git status
 git diff
-git add .github/workflows/ci.yml
+git add .github/workflows/ci.yaml
 git diff --staged
 git commit -m "Add a CI check"
 git push
@@ -52,7 +52,7 @@ You can edit a file in the browser and select **Commit changes**. That creates a
 - [ ] I know **which task** this change is for.
 - [ ] I changed the intended file, not an unrelated one.
 - [ ] I checked indentation in `.yml` files (use spaces, not tabs).
-- [ ] I did not accidentally commit a compiled `expo` binary, `.DS_Store`, or temporary files.
+- [ ] I did not accidentally commit a compiled `sdo-expo` binary, `.DS_Store`, or temporary files.
 - [ ] I checked `git diff` (or the GitHub editor's change preview).
 - [ ] I committed and pushed to the intended branch.
 
@@ -65,8 +65,8 @@ These checks are **optional**. If a tool is not installed, use the GitHub Action
 ### C — if GCC is installed
 
 ```bash
-gcc expo.c -lm -o expo
-./expo 2 10
+gcc expo/expo.c -lm -o sdo-expo
+./sdo-expo 2 10
 ```
 
 Look at the printed result. Compiling successfully does **not** prove the calculation is correct.
@@ -88,7 +88,7 @@ kubectl describe job JOB_NAME
 kubectl logs job/JOB_NAME
 ```
 
-Replace `JOB_NAME` with the name from `Job.yaml`. Do **not** run these commands against an unrelated cluster. For this lab, the intended Kubernetes environment is the temporary Minikube cluster created in GitHub Actions.
+Replace `JOB_NAME` with the name from `expo/Job.yaml`. Do **not** run these commands against an unrelated cluster. For this lab, the intended Kubernetes environment is the temporary Minikube cluster created in GitHub Actions.
 
 ## 5. Finding the useful GitHub Actions log
 
@@ -98,14 +98,14 @@ Replace `JOB_NAME` with the name from `Job.yaml`. Do **not** run these commands 
 4. Select the job that failed or was skipped.
 5. Expand the relevant step and read the first meaningful error message.
 
-| What you see | First question to ask |
-| --- | --- |
-| **Green check** | Did the workflow actually verify the behavior required by the task? |
-| **Red X** | Which step failed, and what does its error say? |
-| **Skipped job** | Does the job depend on another job that failed? |
-| **No new run** | Did you push? Which branch? Does the workflow trigger on it? |
-| **Build succeeds, runtime fails** | Does the image launch the correct executable? |
-| **Kubernetes Job never completes** | What do the Pod status and events say? |
+| What you see                       | First question to ask                                               |
+| ---------------------------------- | ------------------------------------------------------------------- |
+| **Green check**                    | Did the workflow actually verify the behavior required by the task? |
+| **Red X**                          | Which step failed, and what does its error say?                     |
+| **Skipped job**                    | Does the job depend on another job that failed?                     |
+| **No new run**                     | Did you push? Which branch? Does the workflow trigger on it?        |
+| **Build succeeds, runtime fails**  | Does the image launch the correct executable?                       |
+| **Kubernetes Job never completes** | What do the Pod status and events say?                              |
 
 ## 6. GitHub Actions YAML — tiny reference
 
@@ -134,14 +134,14 @@ jobs:
 - **`git push` says “Everything up-to-date”** — Check whether you committed your changes (`git status`).
 - **GitHub Actions did not run** — Confirm the branch and workflow triggers; check the Actions tab.
 - **YAML parsing error** — Check indentation, colons, and whether a step begins with `-`.
-- **`./expo` not found locally** — Compile it first, or use GitHub Actions.
+- **`./sdo-expo` not found locally** — Compile it first, or use GitHub Actions.
 - **Docker command not found** — Local Docker is optional; inspect the CI run instead.
 - **No Kubernetes logs** — The Pod may never have started; inspect its status and events.
 - **The output is unexpected** — Print the actual output before changing the expected value.
 
 ## 8. Need a task-specific hint?
 
-Return to [Task 1](task1.md), [Task 2](task2.md), [Task 3](task3.md), or the [Jenkins Bonus](bonus.md) and open its expandable hints **one at a time**.
+Return to [Task 1.1](task1-1.md), [Task 1.2](task1-2.md), [Task 1.3](task1-3.md), [Task 2.1](task2-1.md), [Task 2.2](task2-2.md), [Task 2.3](task2-3.md) or the [Jenkins Bonus](task3-bonus.md) and open its expandable hints **one at a time**.
 
 ---
 

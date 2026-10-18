@@ -1,7 +1,8 @@
-# Task 1 — The Green Build That Lies
+# Task 1.1 — The Green Build That Lies
 
-**Estimated time:** 15 minutes  
-[← Lab Home](../README.md) · [Next: Task 2 →](task2.md) · [📎 Cheatsheet](cheatsheet.md)
+**Classroom timing:** 8 minutes to investigate, then an instructor-led solution reveal. You do not need to finish every step before the reveal.
+
+[← Lab Home](../README.md) · [Next: Task 1.2 →](task1-2.md) · [📎 Cheatsheet](cheatsheet.md)
 
 **Need help?** [Jump to the expandable hints](#-stuck-open-a-hint-click-to-expand). Open one at a time.
 
@@ -11,13 +12,13 @@ The GitHub Actions workflow successfully compiles a C program. It reports succes
 
 Your goal is to make CI verify the **behavior** of the program, not just whether GCC can compile it.
 
-- Inspect `.github/workflows/ci.yml` and identify what the `test` job currently checks.
+- Inspect `.github/workflows/ci.yaml` and identify what the `test` job currently checks.
 - Add a functional check that runs the compiled program with **base `2`** and **exponent `10`**.
 - Require the exact output: `2 ^ 10 = 1024`.
 - Push your change, examine the result, and investigate any failure.
 - Correct the underlying problem and run the workflow again.
 
-**Do not change `expo.c` before running your new test.** The first failure is part of the evidence.
+**Do not change `expo/expo.c` before running your new test.** The first failure is part of the evidence.
 
 ## Evidence to collect
 
@@ -69,7 +70,7 @@ Put it **after compilation**, inside the existing `test` job. Steps in a job run
 <details>
 <summary>Hint 2 — The test is red. Is that necessarily bad?</summary>
 
-Not yet. If GCC succeeded but the comparison failed, the new test may have uncovered a real bug. Print the program's actual output and inspect `expo.c`.
+Not yet. If GCC succeeded but the comparison failed, the new test may have uncovered a real bug. Print the program's actual output and inspect `expo/expo.c`.
 
 </details>
 
@@ -90,4 +91,4 @@ Look at the expression passed to `printf`. The C math library provides `pow(base
 
 ---
 
-[← Lab Home](../README.md) · [Next: Task 2 — The Unprotected Docker Build →](task2.md)
+[← Lab Home](../README.md) · [Next: Task 1.2 — The Unprotected Docker Build →](task1-2.md)

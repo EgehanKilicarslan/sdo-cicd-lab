@@ -1,7 +1,8 @@
-# Task 2 — The Unprotected Docker Build
+# Task 1.2 — The Unprotected Docker Build
 
-**Estimated time:** 20 minutes  
-[← Task 1](task1.md) · [Lab Home](../README.md) · [Next: Task 3 →](task3.md) · [📎 Cheatsheet](cheatsheet.md)
+**Classroom timing:** 9 minutes to investigate, then an instructor-led solution reveal. You do not need to finish every step before the reveal.
+
+[← Task 1.1](task1-1.md) · [Lab Home](../README.md) · [Next: Task 1.3 →](task1-3.md) · [📎 Cheatsheet](cheatsheet.md)
 
 **Need help?** [Jump to the expandable hints](#-stuck-open-a-hint-click-to-expand). Open one at a time.
 
@@ -14,7 +15,7 @@ The C program now passes its functional test. The repository also contains a `do
 
 ### Part A — Protect the build
 
-Inspect the two jobs in `.github/workflows/ci.yml`. Make `docker-build` depend on a successful `test` job.
+Inspect the two jobs in `.github/workflows/ci.yaml`. Make `docker-build` depend on a successful `test` job.
 
 **Prove your change:** Temporarily make the functional test fail, push, and inspect the Actions run. The Docker job should be **skipped**, not executed. Restore the correct test afterward.
 
@@ -54,7 +55,7 @@ docker build -t IMAGE_NAME:TAG BUILD_CONTEXT
 docker run --rm IMAGE_NAME:TAG ARG1 ARG2
 ```
 
-The build context is usually `.` when the Dockerfile is in the repository root. The image name and tag must match between `docker build` and `docker run`.
+For Expo, the Dockerfile is in `expo/`, so the Docker build context is `./expo`.  The image name and tag must match between `docker build` and `docker run`.
 
 ### C. Read a multi-stage Dockerfile
 
@@ -71,7 +72,7 @@ The path in `ENTRYPOINT` must exist **inside the final image**.
 
 ### D. Verify the result
 
-A container returning exit code `0` is useful, but for this lab you must also verify the printed answer. You can reuse the Bash output-capture and comparison pattern from [Task 1](task1.md).
+A container returning exit code `0` is useful, but for this lab you must also verify the printed answer. You can reuse the Bash output-capture and comparison pattern from [Task 1](task1-1.md).
 
 ## 🧩 Stuck? Open a hint (click to expand)
 
@@ -107,4 +108,4 @@ Follow the file through the **final** stage of the Dockerfile. The location used
 
 ---
 
-[← Task 1](task1.md) · [Lab Home](../README.md) · [Next: Task 3 — Kubernetes Investigation →](task3.md)
+[← Task 1.1](task1-1.md) · [Lab Home](../README.md) · [Next: Task 3 — Kubernetes Investigation →](task1-3.md)
