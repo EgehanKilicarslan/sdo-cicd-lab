@@ -101,7 +101,7 @@ jobs:
       # Confirm that the C server compiles, then build its Docker image.
       # Case file: docs/task2-1.md
       - name: Compile web server
-        run: gcc -Wall -Wextra -o sdo-server website/server.c
+        run: gcc -Wall -Wextra -o /tmp/sdo-server website/server.c
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
