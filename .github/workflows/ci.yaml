@@ -60,7 +60,7 @@ jobs:
       - name: Build Docker image
         uses: docker/build-push-action@v6
         with:
-          context: ./sdo-expo
+          context: ./expo # Do not change it to sdo-expo its the folder name :D
           load: true
           tags: sdo-expo:1.0
 
