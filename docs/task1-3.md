@@ -10,7 +10,7 @@
 
 ## Part A — Connect the steps (guided, ~8 minutes)
 
-You already have an image named `expo:1.0` built with Docker Buildx. Because the build action uses `load: true`, that image is available to Docker on the GitHub Actions runner. Minikube runs a Kubernetes cluster with its own image environment, so the image must also be loaded into Minikube.
+You already have an image named `sdo-expo:1.0` built with Docker Buildx. Because the build action uses `load: true`, that image is available to Docker on the GitHub Actions runner. Minikube runs a Kubernetes cluster with its own image environment, so the image must also be loaded into Minikube.
 
 Add the following steps **after your Docker container test, inside the same `docker-build` job**. Keep them in this order:
 

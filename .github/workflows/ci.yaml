@@ -20,7 +20,7 @@ jobs:
   # Instructions: docs/task1-1.md
   # ============================================================
 
-  test:
+  task1-test:
     runs-on: ubuntu-latest
 
     steps:
@@ -46,7 +46,7 @@ jobs:
   # Instructions: docs/task1-2.md
   # ============================================================
 
-  docker-build:
+  task1-docker-build:
     # TASK 1.2: Add the required job dependency here.
 
     runs-on: ubuntu-latest
@@ -60,9 +60,9 @@ jobs:
       - name: Build Docker image
         uses: docker/build-push-action@v6
         with:
-          context: ./expo
+          context: ./sdo-expo
           load: true
-          tags: expo:1.0
+          tags: sdo-expo:1.0
 
       # TASK 1.2: Add a step to run and verify the container.
 
@@ -91,7 +91,7 @@ jobs:
   # TASK 2 — WEBSITE INVESTIGATION
   # Independent job, same workflow; both investigations run on push.
   # ============================================================
-  website:
+  task2-website:
     # TASK 2.1–2.3: Investigate the website in the same CI pipeline.
     runs-on: ubuntu-latest
     steps:
@@ -101,10 +101,17 @@ jobs:
       # Confirm that the C server compiles, then build its Docker image.
       # Case file: docs/task2-1.md
       - name: Compile web server
-        run: gcc -Wall -Wextra -o /tmp/sdo-server website/server.c
+        run: gcc -Wall -Wextra -o sdo-server website/server.c
 
-      - name: Build website image
-        run: docker build -t sdo-web:1.0 ./website
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./website
+          load: true
+          tags: sdo-web:1.0
 
       # TASK 2.2 — DOES THE WEBSITE REALLY WORK?
       # Start the container, request its HTTP endpoint, and assert its response.

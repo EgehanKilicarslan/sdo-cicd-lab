@@ -2,7 +2,7 @@ apiVersion: batch/v1
 kind: Job
 
 metadata:
-  name: expo-job
+  name: sdo-expo-job
 
 spec:
   backoffLimit: 0
@@ -12,8 +12,8 @@ spec:
       restartPolicy: Never
 
       containers:
-        - name: expo-application
-          image: expo:2.0
+        - name: sdo-expo-application
+          image: sdo-expo:2.0
           imagePullPolicy: Never
           args: ["2", "10"]
 

@@ -14,7 +14,7 @@ You already built a working CI pipeline in GitHub Actions. Now recreate its core
 The starter `Jenkinsfile` already contains a **Compile** stage. Add:
 
 1. **Functional Test** — Run the compiled C program with `2` and `10`; fail the stage unless the output is exactly `2 ^ 10 = 1024`.
-2. **Docker Build** — Build the existing Dockerfile into an image tagged `expo:1.0`.
+2. **Docker Build** — Build the existing Dockerfile into an image tagged `sdo-expo:1.0`.
 
 **Extra challenge:** Add a **Docker Test** stage that runs that image with `2` and `10` and checks the output. This is optional; the two stages above are the core bonus task.
 
@@ -201,7 +201,7 @@ If Jenkins cannot download plugins, launch its server, or connect to the host Do
 - [ ] I edited only the repository-root `Jenkinsfile` for this bonus.
 - [ ] The existing Compile stage still works.
 - [ ] A Functional Test stage checks `2 ^ 10 = 1024`.
-- [ ] A Docker Build stage builds `expo:1.0`.
+- [ ] A Docker Build stage builds `sdo-expo:1.0`.
 - [ ] The stages are in the correct order.
 - [ ] Jenkins Bonus Validation executes the required stages successfully.
 - [ ] **Optional:** A Docker Test stage verifies the container output.
