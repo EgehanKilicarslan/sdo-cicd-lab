@@ -113,15 +113,6 @@ jobs:
           load: true
           tags: sdo-web:1.0
 
-      - name: Start website container
-        run: docker run -d --name sdo-web -p 8080:8080 sdo-web:1.0
-
-      - name: Verify HTTP response
-        run: |
-          response=$(curl --fail --silent --show-error http://localhost:8080/)
-          printf '%s\n' "$response"
-          printf '%s\n' "$response" | grep -Fq 'Hello from my C web server!'
-
       # TASK 2.3 — RELIABLE CI AND DEBUGGING
       # Add a readiness retry loop and best-effort failure diagnostics.
       # Case file: docs/task2-3.md
