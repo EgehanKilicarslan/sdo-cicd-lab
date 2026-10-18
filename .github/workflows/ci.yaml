@@ -113,10 +113,14 @@ jobs:
           load: true
           tags: sdo-web:1.0
 
-      # TASK 2.2 — DOES THE WEBSITE REALLY WORK?
-      # Start the container, request its HTTP endpoint, and assert its response.
-      # Case file: docs/task2-2.md
-      # Add your container run + HTTP assertion steps here.
+      - name: Start website container
+        run: docker run -d --name sdo-web -p 8080:8080 sdo-web:1.0
+
+      - name: Verify HTTP response
+        run: |
+          response=$(curl --fail --silent --show-error http://localhost:8080/)
+          printf '%s\n' "$response"
+          printf '%s\n' "$response" | grep -Fq 'Hello from my C web server!'
 
       # TASK 2.3 — RELIABLE CI AND DEBUGGING
       # Add a readiness retry loop and best-effort failure diagnostics.
