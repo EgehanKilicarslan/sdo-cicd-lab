@@ -29,6 +29,9 @@ jobs:
       - name: Compile C application
         run: gcc expo/expo.c -lm -o sdo-expo
 
+      - name: Run an example program
+        run: ./sdo-expo 2 10
+
       # TASK 1.1: Add your functional test step here.
 
   # ============================================================
